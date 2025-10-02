@@ -1,1 +1,1 @@
-个人学习笔记，来源于B站、CSDN、Deeplearning、Huggingface等各处资料汇总，持续更新
+个人笔记，持续更新
