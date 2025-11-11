@@ -1,0 +1,444 @@
+[1mdiff --git "a/\346\267\261\345\272\246\345\255\246\344\271\240.md" "b/\346\267\261\345\272\246\345\255\246\344\271\240.md"[m
+[1mindex f37bff4..7b7f097 100644[m
+[1m--- "a/\346\267\261\345\272\246\345\255\246\344\271\240.md"[m
+[1m+++ "b/\346\267\261\345\272\246\345\255\246\344\271\240.md"[m
+[36m@@ -26,7 +26,7 @@[m [mX：左横右竖（维度n）；Y：朝向与X相同（维度m）。[m
+ [m
+ 2。将预测值集合与真实值集合计算获取单个权重下的误差。[m
+ [m
+[31m-3。对权重更新，使得对应误差最小。[m
+[32m+[m[32m3。对权重更新，使得对应误差最小。[m[41m [m
+ [m
+ ## 梯度下降[m
+ [m
+[36m@@ -68,7 +68,7 @@[m [mW更新：W=W-αL‘，这里α是学习率，即每次向最低点移动的步[m
+ [m
+ <img src="笔记图保存\2cd40aba1e9f50bbb868d767a113cb41.png" alt="2cd40aba1e9f50bbb868d767a113cb41" style="zoom: 33%;" />[m
+ [m
+[31m-问题：如果每次都类似上面进行计算，函数展开后形式将始终不变化，变换失去意义。为此，在每次结果输出时需要对结果向量做一个非线性函数的变换（即激活函数）。[m
+[32m+[m[32m问题：如果每次都类似上面进行计算，函数展开后形式将始终不变化，变换失去意义。为此，在每次结果输出时需要对结果向量做一个**非线性函数的变换**（即**激活函数**）。[m
+ [m
+ <img src="笔记图保存\fa7ae0ef402295b7136744f5146b4dd5.png" alt="fa7ae0ef402295b7136744f5146b4dd5" style="zoom: 33%;" />[m
+ [m
+[36m@@ -296,7 +296,6 @@[m [mLogistic回归是针对二分类问题的。[m
+ 2. L1、L2正则化，防止W矩阵调节程度过大。[m
+ 3. 使用其它激活函数。[m
+ [m
+[31m-[m
+ <img src="笔记图保存\7ed7aefe0d4cd592c66aea4fc7bc0bf0.png" alt="7ed7aefe0d4cd592c66aea4fc7bc0bf0" style="zoom: 33%;" />[m
+ [m
+ 常见的Sigmod函数：[m
+[36m@@ -358,7 +357,7 @@[m [mfor epoch in range(1000):[m
+ # 针对不同的x生成预测值并展示[m
+ x = np.linspace(0, 10, 200)[m
+ # reshape操作[m
+[31m-x_t = torch.Tensor(x).view((200, 1))[m
+[32m+[m[32mx_t = torch.Tensor(x).view((200, 1))[m[41m  [m
+ y_t = model(x_t)[m
+ y = y_t.data.numpy()[m
+ plt.plot(x, y)[m
+[36m@@ -381,7 +380,7 @@[m [mplt.show()[m
+ [m
+ 假设需要按照上面的方式进行调整，只需修改此处模型的输入维数即可。 [m
+ [m
+[31m-为什么有时会调整输出维度：[m
+[32m+[m[32m为什么需要调整输出维度：[m
+ [m
+ 可以看作，这里只是调整中间步骤输出的维度，需要在进行多次变换后，最后再次转换为一维输出结果。[m
+ [m
+[36m@@ -687,7 +686,7 @@[m [mprint("=" * 30)[m
+ [m
+ 2.输出的和等于1，[m
+ [m
+[31m-解决方案：神经网络保持先前的sigmod层不变，输出层使用softmax。[m
+[32m+[m[32m解决方案：神经网络保持先前的激活函数不变，输出层使用softmax。[m
+ [m
+ 这里，直接控制输出的预测值y_pre维数为样本类别数：[m
+ [m
+[36m@@ -746,7 +745,7 @@[m [mprint("Loss1 = ", l1.data, "\nLoss2 = ", l2.data)[m
+ [m
+ 每张图像都可以看作矩阵形式，使用8位（1字节）来表示每个像素的灰度值，8位可以表示的整数范围是0到255（2^8=256）。[m
+ [m
+[31m-将（0-255）进行标准化，则可以构成数据集矩阵。例如下图是（1，28，28）（C(channel)，W(width)，H(height)）。[m
+[32m+[m[32m将（0-255）进行标准化，则可以构成数据集矩阵。例如下图是（1，28，28）（C(channel)，H(height)，W(width)）。[m
+ [m
+ channel指颜色通道，RGB通道数为3，此处黑白则为1。[m
+ [m
+[36m@@ -762,7 +761,7 @@[m [mimport torch.nn.functional as F[m
+ # 设置批量处理的样本数=64[m
+ batch_size = 64[m
+ # 构造对图像进行处理的转换器transform，对每个元素进行进行pipline处理：[m
+[31m-# 首先将每张图片转换为（C，W，H）的Tensor形式，transforms.ToTensor() 会把图像像素从 [0, 255] 缩放到 [0.0, 1.0][m
+[32m+[m[32m# 首先将每张图片转换为（C，H，W）的Tensor形式，transforms.ToTensor() 会把图像像素从 [0, 255] 缩放到 [0.0, 1.0][m
+ # 然后将每个Tensor进行标准化缩放，此处缩放至均值0.1307，标准差0.3081的正态分布（MNIST数据集图像的均值和标准差）。[m
+ transform = transforms.Compose([transforms.ToTensor(),[m
+                                 transforms.Normalize((0.1307,), (0.3081,))[m
+[36m@@ -1487,6 +1486,18 @@[m [mAUC < 0.5：表示模型性能不如随机猜测。[m
+ 注：AUC只能用于二分类问题[m
+ ```[m
+ [m
+[32m+[m[32m## 置信区间[m
+[32m+[m
+[32m+[m[32m置信区间是对“真实性能值可能落在哪个范围”的一个统计估计。由于只在**有限样本**（如 100 条测试数据）上评估模型，得到的准确率（如 93%）只是一个**点估计**，它可能因为样本随机性而偏离真实值。置信区间给出了一个范围（例如 [90.6%, 94.1%]），表示：**如重复多次从同一分布中抽样评估，大约 95% 的区间会包含真实准确率**。[m
+[32m+[m
+[32m+[m[32mHugging Face 的 `bootstrap` 默认使用 **95% 置信水平**。[m[41m [m
+[32m+[m
+[32m+[m[32m<img src="笔记图保存/96e57d74-a89b-44e6-91c3-edf329c74da1.png" alt="96e57d74-a89b-44e6-91c3-edf329c74da1" style="zoom: 67%;" />[m
+[32m+[m
+[32m+[m[32m即：“有 95% 的把握认为：这个模型在“整个测试数据总体”上的真实准确率，落在 90.6% 到 94.1% 之间。”[m
+[32m+[m
+[32m+[m[32m<img src="笔记图保存/09ca2bc3-3578-49d7-ae54-a7a14e48167e.png" alt="09ca2bc3-3578-49d7-ae54-a7a14e48167e" style="zoom:67%;" />[m
+[32m+[m
+ ## 显存占用计算[m
+ [m
+ 显存 ≈ 参数量 × 存放参数对应的字节[m
+[36m@@ -4070,285 +4081,6 @@[m [mAnchor和Negative：不同人[m
+ [m
+ 这里仅选择一个中间层输出进行风格代价函数计算，但实际上可自选多个（如不同的早期层、晚期层以实现风格控制）（同步设置多个权重参数），使结果更优。[m
+ [m
+[31m-## 视觉Prompt工程[m
+[31m-[m
+[31m-任何形式的内容都可以作为Prompt，包括但不限于文本、图像、视频、音频等[m
+[31m-[m
+[31m-<img src="笔记图保存/PixPin_2025-10-16_19-33-14.png" alt="PixPin_2025-10-16_19-33-14" style="zoom:50%;" />[m
+[31m-[m
+[31m-当提及Input，它往往包含了Prompt[m
+[31m-[m
+[31m-<img src="笔记图保存/PixPin_2025-10-16_19-42-43.png" alt="PixPin_2025-10-16_19-42-43" style="zoom: 33%;" />[m
+[31m-[m
+[31m-和注重训练的深度学习流程不同，Prompt工程往往基于预训练模型，进行模型设置、输入和提示修改，不会进行任何模型权重修改[m
+[31m-[m
+[31m-<img src="笔记图保存/PixPin_2025-10-16_19-44-07.png" alt="PixPin_2025-10-16_19-44-07" style="zoom:33%;" />[m
+[31m-[m
+[31m-### 分割[m
+[31m-[m
+[31m-```python[m
+[31m-[m
+[31m-```[m
+[31m-[m
+[31m-utils.py[m
+[31m-[m
+[31m-```[m
+[31m-import matplotlib.pyplot as plt[m
+[31m-import numpy as np[m
+[31m-import random[m
+[31m-from PIL import Image[m
+[31m-import torch[m
+[31m-[m
+[31m-[m
+[31m-def resize_image(image, input_size):[m
+[31m-    w, h = image.size[m
+[31m-    scale = input_size / max(w, h)[m
+[31m-    new_w = int(w * scale)[m
+[31m-    new_h = int(h * scale)[m
+[31m-    image = image.resize((new_w, new_h))[m
+[31m-    return image[m
+[31m-[m
+[31m-def format_results(result, filter=0):[m
+[31m-    annotations = [][m
+[31m-    n = len(result.masks.data)[m
+[31m-    for i in range(n):[m
+[31m-        annotation = {}[m
+[31m-        mask = result.masks.data[i] == 1.0[m
+[31m-[m
+[31m-        if torch.sum(mask) < filter:[m
+[31m-            continue[m
+[31m-        annotation["id"] = i[m
+[31m-        annotation["segmentation"] = mask.cpu().numpy()[m
+[31m-        annotation["bbox"] = result.boxes.data[i][m
+[31m-        annotation["score"] = result.boxes.conf[i][m
+[31m-        annotation["area"] = annotation["segmentation"].sum()[m
+[31m-        annotations.append(annotation)[m
+[31m-    return annotations[m
+[31m-[m
+[31m-[m
+[31m-def box_prompt(masks, bbox):[m
+[31m-    h = masks.shape[1][m
+[31m-    w = masks.shape[2][m
+[31m-    [m
+[31m-    bbox[0] = round(bbox[0]) if round(bbox[0]) > 0 else 0[m
+[31m-    bbox[1] = round(bbox[1]) if round(bbox[1]) > 0 else 0[m
+[31m-    bbox[2] = round(bbox[2]) if round(bbox[2]) < w else w[m
+[31m-    bbox[3] = round(bbox[3]) if round(bbox[3]) < h else h[m
+[31m-[m
+[31m-    # IoUs = torch.zeros(len(masks), dtype=torch.float32)[m
+[31m-    bbox_area = (bbox[3] - bbox[1]) * (bbox[2] - bbox[0])[m
+[31m-[m
+[31m-    masks_area = torch.sum(masks[:, bbox[1] : bbox[3], bbox[0] : bbox[2]], dim=(1, 2))[m
+[31m-    orig_masks_area = torch.sum(masks, dim=(1, 2))[m
+[31m-[m
+[31m-    union = bbox_area + orig_masks_area - masks_area[m
+[31m-    IoUs = masks_area / union[m
+[31m-    max_iou_index = torch.argmax(IoUs)[m
+[31m-[m
+[31m-    return masks[max_iou_index].cpu().numpy(), max_iou_index[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-def point_prompt(masks, points, point_label):  # numpy 处理[m
+[31m-    h = masks[0]["segmentation"].shape[0][m
+[31m-    w = masks[0]["segmentation"].shape[1][m
+[31m-    [m
+[31m-    onemask = np.zeros((h, w))[m
+[31m-    masks = sorted(masks, key=lambda x: x['area'], reverse=True)[m
+[31m-    for i, annotation in enumerate(masks):[m
+[31m-        if type(annotation) == dict:[m
+[31m-            mask = annotation['segmentation'][m
+[31m-        else:[m
+[31m-            mask = annotation[m
+[31m-        for i, point in enumerate(points):[m
+[31m-            if mask[point[1], point[0]] == 1 and point_label[i] == 1:[m
+[31m-                onemask[mask] = 1[m
+[31m-            if mask[point[1], point[0]] == 1 and point_label[i] == 0:[m
+[31m-                onemask[mask] = 0[m
+[31m-    onemask = onemask >= 1[m
+[31m-    return onemask, 0[m
+[31m-[m
+[31m-[m
+[31m-def show_masks_on_image(image, masks):[m
+[31m-    # Create a mask image (assuming binary mask)[m
+[31m-    #image_with_mask = Image.open(image_path).convert("RGBA")[m
+[31m-    image_with_mask = image.convert("RGBA")[m
+[31m-    [m
+[31m-    for mask in masks:[m
+[31m-        #mask = mask.cpu().numpy()[m
+[31m-        [m
+[31m-        height, width = mask.shape[m
+[31m-        mask_array = np.zeros((height, width, 4), dtype=np.uint8)[m
+[31m-        color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 150][m
+[31m-        [m
+[31m-        mask_array[mask, :] = color[m
+[31m-        mask_image = Image.fromarray(mask_array)[m
+[31m-[m
+[31m-        width, height = image_with_mask.size[m
+[31m-        mask_image = mask_image.resize((width, height))[m
+[31m-        [m
+[31m-        # Overlay the mask on the image[m
+[31m-        image_with_mask = Image.alpha_composite([m
+[31m-            image_with_mask,[m
+[31m-            mask_image)[m
+[31m-    [m
+[31m-    # Display the result[m
+[31m-    image_with_mask.show()[m
+[31m-[m
+[31m-[m
+[31m-def show_box(box, ax):[m
+[31m-    x0, y0 = box[0], box[1][m
+[31m-    w, h = box[2] - box[0], box[3] - box[1][m
+[31m-    ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0,0,0,0), lw=2))[m
+[31m-[m
+[31m-def show_boxes_on_image(raw_image, boxes):[m
+[31m-    plt.figure(figsize=(10,10))[m
+[31m-    plt.imshow(raw_image)[m
+[31m-    for box in boxes:[m
+[31m-      show_box(box, plt.gca())[m
+[31m-    plt.axis('on')[m
+[31m-    plt.show()[m
+[31m-[m
+[31m-[m
+[31m-def show_points_on_image(raw_image, input_points, input_labels=None):[m
+[31m-    plt.figure(figsize=(10,10))[m
+[31m-    plt.imshow(raw_image)[m
+[31m-    input_points = np.array(input_points)[m
+[31m-    if input_labels is None:[m
+[31m-      labels = np.ones_like(input_points[:, 0])[m
+[31m-    else:[m
+[31m-      labels = np.array(input_labels)[m
+[31m-    show_points(input_points, labels, plt.gca())[m
+[31m-    plt.axis('on')[m
+[31m-    plt.show()[m
+[31m-[m
+[31m-import matplotlib.pyplot as plt[m
+[31m-import numpy as np[m
+[31m-[m
+[31m-def show_mask(mask, ax, random_color=False):[m
+[31m-    if random_color:[m
+[31m-        color = np.concatenate([np.random.random(3), np.array([0.6])], axis=0)[m
+[31m-    else:[m
+[31m-        color = np.array([30/255, 144/255, 255/255, 0.6])[m
+[31m-    h, w = mask.shape[-2:][m
+[31m-    mask_image = mask.reshape(h, w, 1) * color.reshape(1, 1, -1)[m
+[31m-    ax.imshow(mask_image)[m
+[31m-[m
+[31m-[m
+[31m-def show_box(box, ax):[m
+[31m-    x0, y0 = box[0], box[1][m
+[31m-    w, h = box[2] - box[0], box[3] - box[1][m
+[31m-    ax.add_patch(plt.Rectangle((x0, y0), w, h, edgecolor='green', facecolor=(0,0,0,0), lw=2))[m
+[31m-[m
+[31m-def show_boxes_on_image(raw_image, boxes):[m
+[31m-    plt.figure(figsize=(10,10))[m
+[31m-    plt.imshow(raw_image)[m
+[31m-    for box in boxes:[m
+[31m-      show_box(box, plt.gca())[m
+[31m-    plt.axis('on')[m
+[31m-    plt.show()[m
+[31m-[m
+[31m-def show_points_on_image(raw_image, input_points, input_labels=None):[m
+[31m-    plt.figure(figsize=(10,10))[m
+[31m-    plt.imshow(raw_image)[m
+[31m-    input_points = np.array(input_points)[m
+[31m-    if input_labels is None:[m
+[31m-      labels = np.ones_like(input_points[:, 0])[m
+[31m-    else:[m
+[31m-      labels = np.array(input_labels)[m
+[31m-    show_points(input_points, labels, plt.gca())[m
+[31m-    plt.axis('on')[m
+[31m-    plt.show()[m
+[31m-[m
+[31m-def show_points_and_boxes_on_image(raw_image, boxes, input_points, input_labels=None):[m
+[31m-    plt.figure(figsize=(10,10))[m
+[31m-    plt.imshow(raw_image)[m
+[31m-    input_points = np.array(input_points)[m
+[31m-    if input_labels is None:[m
+[31m-      labels = np.ones_like(input_points[:, 0])[m
+[31m-    else:[m
+[31m-      labels = np.array(input_labels)[m
+[31m-    show_points(input_points, labels, plt.gca())[m
+[31m-    for box in boxes:[m
+[31m-      show_box(box, plt.gca())[m
+[31m-    plt.axis('on')[m
+[31m-    plt.show()[m
+[31m-[m
+[31m-def show_points_and_boxes_on_image(raw_image, boxes, input_points, input_labels=None):[m
+[31m-    plt.figure(figsize=(10,10))[m
+[31m-    plt.imshow(raw_image)[m
+[31m-    input_points = np.array(input_points)[m
+[31m-    if input_labels is None:[m
+[31m-      labels = np.ones_like(input_points[:, 0])[m
+[31m-    else:[m
+[31m-      labels = np.array(input_labels)[m
+[31m-    show_points(input_points, labels, plt.gca())[m
+[31m-    for box in boxes:[m
+[31m-      show_box(box, plt.gca())[m
+[31m-    plt.axis('on')[m
+[31m-    plt.show()[m
+[31m-[m
+[31m-def show_points(coords, labels, ax, marker_size=375):[m
+[31m-    pos_points = coords[labels==1][m
+[31m-    neg_points = coords[labels==0][m
+[31m-    ax.scatter(pos_points[:, 0], pos_points[:, 1], color='green', marker='*', s=marker_size, edgecolor='white', linewidth=1.25)[m
+[31m-    ax.scatter(neg_points[:, 0], neg_points[:, 1], color='red', marker='*', s=marker_size, edgecolor='white', linewidth=1.25)[m
+[31m-[m
+[31m-def show_masks_on_image(image, masks):[m
+[31m-    # Create a mask image (assuming binary mask)[m
+[31m-    #image_with_mask = Image.open(image_path).convert("RGBA")[m
+[31m-    image_with_mask = image.convert("RGBA")[m
+[31m-    [m
+[31m-    for mask in masks:[m
+[31m-        #mask = mask.cpu().numpy()[m
+[31m-        [m
+[31m-        height, width = mask.shape[m
+[31m-        mask_array = np.zeros((height, width, 4), dtype=np.uint8)[m
+[31m-        color = [random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 150][m
+[31m-        [m
+[31m-        mask_array[mask, :] = color[m
+[31m-        mask_image = Image.fromarray(mask_array)[m
+[31m-[m
+[31m-        width, height = image_with_mask.size[m
+[31m-        mask_image = mask_image.resize((width, height))[m
+[31m-        [m
+[31m-        # Overlay the mask on the image[m
+[31m-        image_with_mask = Image.alpha_composite([m
+[31m-            image_with_mask,[m
+[31m-            mask_image)[m
+[31m-    [m
+[31m-    # Display the result[m
+[31m-    return image_with_mask[m
+[31m-[m
+[31m-def show_binary_mask(masks, scores):[m
+[31m-    if len(masks.shape) == 4:[m
+[31m-      masks = masks.squeeze()[m
+[31m-    if scores.shape[0] == 1:[m
+[31m-      scores = scores.squeeze()[m
+[31m-[m
+[31m-    fig, ax = plt.subplots(figsize=(15, 15))[m
+[31m-    idx = scores.tolist().index(max(scores))[m
+[31m-    mask = masks[idx].cpu().detach()[m
+[31m-    ax.imshow(np.array(masks[0,:,:]), cmap='gray')[m
+[31m-    score = scores[idx][m
+[31m-    ax.title.set_text(f"Score: {score.item():.3f}")[m
+[31m-    ax.axis("off")[m
+[31m-    plt.show()[m
+[31m-[m
+[31m-```[m
+[31m-[m
+[31m-### 检测[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-### 生成[m
+[31m-[m
+[31m-[m
+[31m-[m
+[31m-### 微调[m
+[31m-[m
+[31m-[m
+[31m-[m
+ # 多模态（待更新）[m
+ [m
+ ## CLIP（待更新）[m
+[36m@@ -7192,7 +6924,306 @@[m [mfor i in range(len(labels)):[m
+ [m
+ ```[m
+ [m
+[31m-## 其他功能（待更新）[m
+[32m+[m[32m## 其他功能[m
+[32m+[m
+[32m+[m[32m### Trainer（待更新）[m
+[32m+[m
+[32m+[m[32mHugging Face Transformers Trainer 的主要功能：[m
+[32m+[m
+[32m+[m[32m1. **数据处理**：加载数据集，例如可进行分词和动态填充[m
+[32m+[m
+[32m+[m[32m2. **模型初始化**：使用 model_init 函数支持超参数搜索时的模型重新初始化[m
+[32m+[m
+[32m+[m[32m3. **评估指标**：配置评估指标[m
+[32m+[m
+[32m+[m[32m4. **训练配置**：设置全面的 TrainingArguments 参数，包括学习率调度、批次大小、混合精度训练等[m
+[32m+[m
+[32m+[m[32m5. **日志记录**：配置详细的日志记录系统，便于监控训练过程[m
+[32m+[m
+[32m+[m[32m6. **检查点管理**：支持从检查点恢复训练，保存最佳模型[m
+[32m+[m
+[32m+[m[32m7. **超参数搜索**：可使用 Optuna 进行超参数优化配置[m
+[32m+[m
+[32m+[m[32m8. **优化器选择**：包含 Apollo 和 Schedule-Free 等先进优化器配置[m
+[32m+[m
+[32m+[m[32m9. **回调函数**：实现自定义回调函数，扩展训练功能[m
+[32m+[m
+[32m+[m[32m10. **评估与推理**：在验证集上评估模型并展示简单推理示例[m
+[32m+[m
+[32m+[m[32m    TrainingArguments参数信息：https://huggingface.co/docs/transformers/v4.57.1/en/main_classes/trainer#transformers.TrainingArguments[m
+[32m+[m
+[32m+[m[32m```python[m
+[32m+[m
+[32m+[m[32m```[m
+[32m+[m
+[32m+[m[32m### Evaluate[m
+[32m+[m
+[32m+[m[32m典型的机器学习流程包含多个可评估的方面，而针对每个方面，Evaluate 都提供了一个工具：[m
+[32m+[m[32m**指标（Metric）** ：指标用于评估模型的性能，通常包含模型的预测结果以及一些真实标签。[evaluate-metric（评估指标） --- evaluate-metric (Evaluate Metric)](https://huggingface.co/evaluate-metric)[m
+[32m+[m
+[32m+[m[32m**比较（Comparison）** ：比较用于比较两个模型。例如，可以通过比较它们的预测结果与真实标签，并计算它们的吻合度来实现。[评估比较（评估比较） --- evaluate-comparison (Evaluate Comparison)](https://huggingface.co/evaluate-comparison)[m
+[32m+[m
+[32m+[m[32m**测量（Measurement）** ：数据集与基于该数据集训练的模型同等重要。通过测量，可以研究数据集的属性。[evaluate-measurement (Evaluate Measurement)](https://huggingface.co/evaluate-measurement)[m
+[32m+[m
+[32m+[m[32m```python[m
+[32m+[m[32m"""[m
+[32m+[m[32m此脚本展示了 Hugging Face Evaluate 库的主要功能，包括：[m
+[32m+[m[32m- 加载和使用各种评估指标[m
+[32m+[m[32m- 组合多个指标[m
+[32m+[m[32m- 分布式评估支持[m
+[32m+[m[32m- 与模型训练框架集成[m
+[32m+[m[32m- 结果可视化和分享[m
+[32m+[m[32m"""[m
+[32m+[m
+[32m+[m[32mimport numpy as np[m
+[32m+[m[32mimport evaluate[m
+[32m+[m[32mfrom evaluate import evaluator[m
+[32m+[m[32mfrom evaluate.visualization import radar_plot[m
+[32m+[m[32mfrom transformers import pipeline[m
+[32m+[m[32mfrom datasets import load_dataset[m
+[32m+[m
+[32m+[m[32m# =
